@@ -3,421 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reality Check | Deepfake Detection</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <title>Reality Check - Deepfake Detection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #6c5ce7;
-            --secondary: #00cec9;
-            --dark: #0f0f1a;
-            --darker: #0a0a12;
-            --light: #f8f9fa;
-            --glass: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --real-color: #00b894;
-            --fake-color: #ff7675;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
-
+        
         body {
-            font-family: 'Space Grotesk', sans-serif;
-            background: linear-gradient(135deg, var(--darker), var(--dark));
-            color: var(--light);
+            background: #0f0f1a;
+            color: white;
             min-height: 100vh;
             padding: 2rem;
-            line-height: 1.6;
         }
-
+        
         .container {
-            max-width: 1200px;
+            max-width: 800px;
             margin: 0 auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
         }
-
-        header {
+        
+        h1 {
             text-align: center;
-            margin-bottom: 3rem;
-            position: relative;
-        }
-
-        .logo {
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, #6c5ce7, #00cec9);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            display: inline-block;
-            margin-bottom: 0.5rem;
-            letter-spacing: -1px;
-            position: relative;
         }
-
-        .logo::after {
-            content: 'AI';
-            position: absolute;
-            top: -10px;
-            right: -30px;
-            font-size: 1rem;
-            background: var(--real-color);
-            color: var(--darker);
-            padding: 0.2rem 0.5rem;
-            border-radius: 20px;
-            font-weight: 700;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .tagline {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .main-content {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-
-        .card {
-            background: var(--glass);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 16px;
-            border: 1px solid var(--glass-border);
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .section-title svg {
-            width: 24px;
-            height: 24px;
-        }
-
+        
         .upload-area {
-            border: 2px dashed var(--glass-border);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
             border-radius: 12px;
             padding: 3rem 2rem;
             text-align: center;
+            margin: 2rem 0;
             cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            transition: all 0.3s;
         }
-
+        
         .upload-area:hover {
-            border-color: var(--primary);
+            border-color: #6c5ce7;
         }
-
-        .upload-area.active {
-            border-color: var(--secondary);
-            background: rgba(0, 206, 201, 0.05);
-        }
-
+        
         .upload-icon {
             font-size: 3rem;
             margin-bottom: 1rem;
-            color: var(--secondary);
+            color: #00cec9;
         }
-
-        .upload-text {
-            margin-bottom: 1rem;
-        }
-
-        .upload-hint {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.9rem;
-        }
-
+        
         #file-input {
             display: none;
         }
-
+        
         .btn {
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            background: linear-gradient(90deg, #6c5ce7, #00cec9);
             color: white;
             border: none;
             padding: 0.75rem 1.5rem;
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-family: 'Space Grotesk', sans-serif;
             margin-top: 1rem;
+            transition: all 0.3s;
         }
-
+        
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
         }
-
-        .btn svg {
-            width: 18px;
-            height: 18px;
-        }
-
+        
         .results {
             display: none;
+            margin-top: 2rem;
         }
-
+        
         .image-preview {
             width: 100%;
             max-height: 400px;
             border-radius: 12px;
             overflow: hidden;
             margin-bottom: 2rem;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
         }
-
+        
         .image-preview img {
             width: 100%;
             height: auto;
             display: block;
         }
-
-        .confidence-meter {
+        
+        .meter {
             margin-bottom: 1.5rem;
         }
-
+        
         .meter-label {
             display: flex;
             justify-content: space-between;
             margin-bottom: 0.5rem;
         }
-
+        
         .meter-bar {
-            height: 12px;
+            height: 10px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
+            border-radius: 5px;
             overflow: hidden;
-            margin-bottom: 1rem;
         }
-
+        
         .meter-fill {
             height: 100%;
-            border-radius: 6px;
-            width: 0;
-            transition: width 1s ease-out;
+            border-radius: 5px;
+            width: 0%;
+            transition: width 1s;
         }
-
+        
         .real-fill {
-            background: linear-gradient(90deg, var(--real-color), #55efc4);
+            background: linear-gradient(90deg, #00b894, #55efc4);
         }
-
+        
         .fake-fill {
-            background: linear-gradient(90deg, var(--fake-color), #fd79a8);
+            background: linear-gradient(90deg, #ff7675, #fd79a8);
         }
-
-        .confidence-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 500;
-            font-size: 1.1rem;
-        }
-
+        
         .loading {
             display: none;
             text-align: center;
             padding: 2rem;
         }
-
+        
         .spinner {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             border: 4px solid rgba(255, 255, 255, 0.1);
             border-radius: 50%;
-            border-top-color: var(--secondary);
+            border-top-color: #00cec9;
             margin: 0 auto 1rem;
             animation: spin 1s linear infinite;
         }
-
+        
         @keyframes spin {
             to { transform: rotate(360deg); }
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 4rem;
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 0.9rem;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .footer-links a {
-            color: rgba(255, 255, 255, 0.6);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .footer-links a:hover {
-            color: var(--secondary);
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 1.5rem;
-            }
-            
-            .logo {
-                font-size: 2rem;
-            }
-            
-            .card {
-                padding: 1.5rem;
-            }
-            
-            .upload-area {
-                padding: 2rem 1.5rem;
-            }
-        }
-
-        /* Animated background elements */
-        .bg-element {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(60px);
-            opacity: 0.15;
-            z-index: -1;
-        }
-
-        .bg-1 {
-            width: 300px;
-            height: 300px;
-            background: var(--primary);
-            top: -100px;
-            left: -100px;
-        }
-
-        .bg-2 {
-            width: 200px;
-            height: 200px;
-            background: var(--secondary);
-            bottom: -50px;
-            right: -50px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Animated background elements -->
-        <div class="bg-element bg-1"></div>
-        <div class="bg-element bg-2"></div>
-
-        <header>
-            <h1 class="logo">Reality Check</h1>
-            <p class="tagline">Advanced deepfake detection powered by AI</p>
-        </header>
-
-        <main class="main-content">
-            <div class="card">
-                <h2 class="section-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                    </svg>
-                    Upload Media
-                </h2>
-                <div class="upload-area" id="drop-area">
-                    <input type="file" id="file-input" accept="image/*, video/*">
-                    <label for="file-input">
-                        <div class="upload-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="17 8 12 3 7 8"></polyline>
-                                <line x1="12" y1="3" x2="12" y2="15"></line>
-                            </svg>
-                        </div>
-                        <p class="upload-text">Drag & drop media file here or click to browse</p>
-                        <p class="upload-hint">Supports: JPG, PNG, MP4 (Max 50MB)</p>
-                        <button class="btn">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                            </svg>
-                            Select File
-                        </button>
-                    </label>
+        <h1>Reality Check AI</h1>
+        <p style="text-align: center; opacity: 0.8;">Upload an image to detect if it's real or AI-generated</p>
+        
+        <div class="upload-area" id="drop-area">
+            <input type="file" id="file-input" accept="image/*">
+            <div class="upload-icon">📁</div>
+            <p>Drag & drop your image here or</p>
+            <button class="btn" id="select-btn">Select File</button>
+            <p style="font-size: 0.8rem; opacity: 0.6;">Supports: JPG, PNG (Max 16MB)</p>
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Analyzing image...</p>
+        </div>
+        
+        <div class="results" id="results">
+            <div class="image-preview">
+                <img id="preview-image" src="" alt="Preview">
+            </div>
+            
+            <div class="meter">
+                <div class="meter-label">
+                    <span>Real</span>
+                    <span id="real-value">0%</span>
+                </div>
+                <div class="meter-bar">
+                    <div class="meter-fill real-fill" id="real-bar"></div>
                 </div>
             </div>
-
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p>Analyzing media for deepfake indicators...</p>
-            </div>
-
-            <div class="card results" id="results">
-                <h2 class="section-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                    Analysis Results
-                </h2>
-                <div class="image-preview">
-                    <img id="preview-image" src="" alt="Preview">
+            
+            <div class="meter">
+                <div class="meter-label">
+                    <span>Fake</span>
+                    <span id="fake-value">0%</span>
                 </div>
-                <div class="confidence-meter">
-                    <div class="meter-label">
-                        <span>Authentic</span>
-                        <span class="confidence-value" id="real-value">0%</span>
-                    </div>
-                    <div class="meter-bar">
-                        <div class="meter-fill real-fill" id="real-bar"></div>
-                    </div>
-                </div>
-                <div class="confidence-meter">
-                    <div class="meter-label">
-                        <span>Deepfake</span>
-                        <span class="confidence-value" id="fake-value">0%</span>
-                    </div>
-                    <div class="meter-bar">
-                        <div class="meter-fill fake-fill" id="fake-bar"></div>
-                    </div>
+                <div class="meter-bar">
+                    <div class="meter-fill fake-fill" id="fake-bar"></div>
                 </div>
             </div>
-        </main>
-
-        <footer>
-            <div class="footer-links">
-                <a href="#">Privacy Policy</a>
-                <a href="#">How It Works</a>
-                <a href="#">API</a>
-                <a href="#">GitHub</a>
-            </div>
-            <p>© 2023 Reality Check AI | Powered by cutting-edge deep learning</p>
-        </footer>
+        </div>
     </div>
 
     <script>
+        // Elements
         const dropArea = document.getElementById('drop-area');
         const fileInput = document.getElementById('file-input');
-        const selectBtn = document.querySelector('.btn');
+        const selectBtn = document.getElementById('select-btn');
         const loading = document.getElementById('loading');
         const results = document.getElementById('results');
         const previewImage = document.getElementById('preview-image');
@@ -425,111 +209,101 @@
         const fakeValue = document.getElementById('fake-value');
         const realBar = document.getElementById('real-bar');
         const fakeBar = document.getElementById('fake-bar');
-    
-        // Make select button trigger file input
-        selectBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            fileInput.click();
-        });
-    
-        // Handle file selection changes
+
+        // Make button trigger file input
+        selectBtn.addEventListener('click', () => fileInput.click());
+
+        // Handle file selection
         fileInput.addEventListener('change', handleFiles);
-    
+
         // Drag and drop handlers
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dropArea.addEventListener(eventName, preventDefaults, false);
         });
-    
+
         ['dragenter', 'dragover'].forEach(eventName => {
             dropArea.addEventListener(eventName, highlight, false);
         });
-    
+
         ['dragleave', 'drop'].forEach(eventName => {
             dropArea.addEventListener(eventName, unhighlight, false);
         });
-    
+
         dropArea.addEventListener('drop', handleDrop, false);
-    
+
         function preventDefaults(e) {
             e.preventDefault();
             e.stopPropagation();
         }
-    
+
         function highlight() {
-            dropArea.classList.add('active');
+            dropArea.style.borderColor = '#6c5ce7';
         }
-    
+
         function unhighlight() {
-            dropArea.classList.remove('active');
+            dropArea.style.borderColor = 'rgba(255, 255, 255, 0.2)';
         }
-    
+
         function handleDrop(e) {
             const dt = e.dataTransfer;
             const files = dt.files;
             fileInput.files = files;
             handleFiles();
         }
-    
+
         async function handleFiles() {
             const file = fileInput.files[0];
             if (!file) return;
-    
+
             // Check file type
-            const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-            if (!validTypes.includes(file.type)) {
-                alert('Please select a valid image file (JPEG/PNG)');
+            if (!file.type.match('image.*')) {
+                alert('Please select an image file');
                 return;
             }
-    
-            // Show loading state
+
+            // Show loading
             loading.style.display = 'block';
             results.style.display = 'none';
-    
-            // Display preview
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewImage.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-    
-            // Create FormData for the upload
+
+            // Show preview
+            previewImage.src = URL.createObjectURL(file);
+
+            // Upload and analyze
             const formData = new FormData();
             formData.append('file', file);
-    
+
             try {
-                // Send to Flask backend
-               // Change this line in your handleFiles function:
-const response = await fetch('/analyze', {  // Make sure it matches the new endpoint
-    method: 'POST',
-    body: formData
-});
-    
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-    
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+
                 const data = await response.json();
-    
-                // Check for errors from backend
-                if (data.error) {
-                    throw new Error(data.error);
+
+                if (!data.success) {
+                    throw new Error(data.error || 'Analysis failed');
                 }
-    
-                // Update UI with real predictions
+
+                // Display results
                 animateValue(realValue, 0, data.real, 1000);
                 animateValue(fakeValue, 0, data.fake, 1000);
                 animateBar(realBar, data.real, 1000);
                 animateBar(fakeBar, data.fake, 1000);
-    
+
+                // Update preview with processed image if needed
+                if (data.image_path) {
+                    previewImage.src = data.image_path;
+                }
+
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error processing image: ' + error.message);
+                alert('Error: ' + error.message);
             } finally {
                 loading.style.display = 'none';
                 results.style.display = 'block';
             }
         }
-    
+
         function animateValue(element, start, end, duration) {
             let startTimestamp = null;
             const step = (timestamp) => {
@@ -543,7 +317,7 @@ const response = await fetch('/analyze', {  // Make sure it matches the new endp
             };
             window.requestAnimationFrame(step);
         }
-    
+
         function animateBar(element, width, duration) {
             element.style.width = '0%';
             setTimeout(() => {
